@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa; /* Warna latar belakang dari Bootstrap */
+}
+
+/* Bagian Hero dengan warna gradien */
+.hero-section {
+    background: linear-gradient(90deg, #005f73, #0a9396);
+}
+
+/* Kustomisasi warna utama */
+.bg-primary {
+    background-color: #005f73 !important;
+}
+
+.text-primary {
+    color: #005f73 !important;
+}
+
+/* Kustomisasi tombol */
+.btn-warning {
+    background-color: #ee9b00;
+    border-color: #ee9b00;
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #ca6702;
+    border-color: #ca6702;
+}
+
+/* Kustomisasi kartu */
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Kustomisasi hasil simulasi */
+.hasil-container {
+    background-color: #e9d8a6;
+    border-left: 5px solid #ca6702;
+}
+.hasil-container h3 {
+    font-weight: 700;
+    color: #9b2226;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
