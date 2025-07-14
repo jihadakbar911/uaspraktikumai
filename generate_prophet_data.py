@@ -1,77 +1,98 @@
 # ===================================================================
-# GENERATE PROPHET DATA & GRAFIK
-# Tujuan: Menjalankan model Prophet sekali saja untuk menghasilkan
-#         file gambar grafik (.png) yang akan ditampilkan di web.
+# GENERATE PROPHET DATA, EVALUASI & GRAFIK
 # ===================================================================
 
-# 1. Impor library yang dibutuhkan
 import pandas as pd
 from prophet import Prophet
+from prophet.diagnostics import cross_validation, performance_metrics
+# Impor untuk membuat plot cross-validation
+from prophet.plot import plot_cross_validation_metric
 import matplotlib.pyplot as plt
-import json
 
-print("Memulai proses pra-kalkulasi data dan pembuatan grafik Prophet...")
+print("Memulai proses pra-kalkulasi dengan dataset KOTA BOGOR...")
 
-# 2. Muat kedua dataset
 try:
-    df_sampah = pd.read_csv('jumlah_capaian_penanganan_sampah_di_kota_bandung.csv')
-    df_penduduk = pd.read_csv('jumlah_penduduk_kota_bandung.csv')
-    print("✅ Dataset berhasil dimuat.")
+    df_sampah = pd.read_csv('jumlah_produksi_sampah_di_kota_bogor.csv')
+    print("✅ Dataset Kota Bogor berhasil dimuat.")
 except FileNotFoundError:
-    print("❌ ERROR: File CSV tidak ditemukan. Pastikan file berada di folder yang sama.")
+    print("❌ ERROR: Pastikan file 'jumlah_produksi_sampah_di_kota_bogor.csv' ada di folder yang sama.")
     exit()
 
-# 3. Agregasi Data Sampah dari Bulanan ke Tahunan
-df_sampah_tahunan = df_sampah.groupby('tahun')['jumlah_sampah'].sum().reset_index()
-print("✅ Data sampah berhasil diagregasi menjadi tahunan.")
+# Koreksi data anomali untuk tahun 2024
+df_sampah.loc[(df_sampah['tahun'] == 2024) & (df_sampah['jumlah_produksi_sampah'] > 1000), 'jumlah_produksi_sampah'] /= 10
+print("✅ Data anomali untuk tahun 2024 telah dikoreksi.")
 
-# 4. Pilih kolom yang relevan dan gabungkan dataset
-df_penduduk_clean = df_penduduk[['tahun', 'jumlah_penduduk']]
-df_gabungan = pd.merge(df_sampah_tahunan, df_penduduk_clean, on='tahun', how='inner').dropna()
-
-# 5. Persiapan data untuk Prophet
-df_prophet = df_gabungan.rename(columns={'tahun': 'ds', 'jumlah_sampah': 'y'})
-df_prophet['ds'] = pd.to_datetime(df_prophet['ds'].astype(str) + '-12-31')
+# Persiapan data untuk Prophet
+df_prophet = df_sampah.rename(columns={
+    'tahun': 'ds',
+    'jumlah_produksi_sampah': 'y'
+})
+df_prophet = df_prophet[['ds', 'y']]
+df_prophet['ds'] = pd.to_datetime(df_prophet['ds'].astype(str) + '-06-30')
 print("✅ Data telah diformat untuk Prophet.")
 
-# 6. Latih model Prophet dengan regresor penduduk
+# Latih model Prophet
 model_prophet = Prophet(yearly_seasonality=False, weekly_seasonality=False, daily_seasonality=False)
-model_prophet.add_regressor('jumlah_penduduk')
 model_prophet.fit(df_prophet)
 print("✅ Model Prophet berhasil dilatih.")
 
-# 7. Buat frame prediksi masa depan
-future = model_prophet.make_future_dataframe(periods=3, freq='YE')
-pertumbuhan_penduduk_rata2 = df_prophet['jumlah_penduduk'].diff().mean()
-populasi_terakhir = df_prophet['jumlah_penduduk'].iloc[-1]
-populasi_masa_depan = [populasi_terakhir + (pertumbuhan_penduduk_rata2 * i) for i in range(1, 4)]
-future['jumlah_penduduk'] = list(df_prophet['jumlah_penduduk']) + populasi_masa_depan
+# Evaluasi Model dengan Cross-Validation
+print("\nMemulai proses evaluasi model dengan Cross-Validation...")
+try:
+    df_cv = cross_validation(model_prophet, initial='1825 days', period='365 days', horizon='730 days', disable_tqdm=True)
+    df_p = performance_metrics(df_cv)
+    print("\n--- HASIL EVALUASI MODEL PROPHET ---")
+    print(df_p.head())
+    print("------------------------------------")
+    
+    # ===================================================================
+    # BAGIAN BARU: Membuat dan Menyimpan Grafik Evaluasi
+    # ===================================================================
+    print("Membuat dan menyimpan grafik evaluasi (cross-validation)...")
+    fig_cv = plot_cross_validation_metric(df_cv, metric='mape')
+    ax_cv = fig_cv.gca()
+    ax_cv.set_title('Evaluasi Model Prophet (MAPE)', fontsize=16)
+    ax_cv.set_xlabel('Horizon (Jarak Prediksi)', fontsize=12)
+    ax_cv.set_ylabel('MAPE (Error %)', fontsize=12)
+    
+    # Simpan grafik evaluasi sebagai file gambar terpisah
+    fig_cv.savefig('static/grafik_evaluasi_prophet.png', dpi=150, bbox_inches='tight')
+    print("✅ Grafik evaluasi telah disimpan sebagai 'grafik_evaluasi_prophet.png'.")
+    # ===================================================================
 
-# 8. Lakukan prediksi
+except Exception as e:
+    print(f"\n⚠️ Gagal melakukan Cross-Validation. Kemungkinan data historis terlalu sedikit. Error: {e}")
+    print("   Evaluasi model Prophet akan dilewati.")
+
+# Membuat prediksi HANYA sampai tahun 2026
+tahun_terakhir_data = df_prophet['ds'].dt.year.max()
+tahun_untuk_diprediksi = 2026 - tahun_terakhir_data
+future = model_prophet.make_future_dataframe(periods=tahun_untuk_diprediksi, freq='YE')
+
+# Lakukan prediksi
 forecast = model_prophet.predict(future)
-print("✅ Prediksi masa depan telah dibuat.")
+print("\n✅ Prediksi masa depan untuk grafik telah dibuat.")
 
-# 9. Buat dan Simpan Grafik Prediksi sebagai Gambar PNG
-print("Membuat dan menyimpan grafik prediksi...")
+# Menggambar grafik dengan plotting manual
+print("Membuat dan menyimpan grafik prediksi utama...")
 fig1 = model_prophet.plot(forecast)
-plt.title('Prediksi Volume Sampah Kota Bandung (Ton)', fontsize=16)
-plt.xlabel('Tahun', fontsize=12)
-plt.ylabel('Jumlah Sampah (Ton)', fontsize=12)
-plt.grid(True)
+ax = fig1.gca()
 
-# Menyimpan objek grafik (fig1) ke dalam sebuah file gambar di folder static
-# dpi=150 membuat resolusi gambar lebih baik
-# bbox_inches='tight' memastikan tidak ada bagian yang terpotong
+for line in ax.lines:
+    if line.get_marker() == '.':
+        line.set_marker('none')
+
+ax.plot(df_prophet['ds'], df_prophet['y'], 'k.', label='Data Asli')
+ax.set_title('Prediksi Produksi Sampah Kota Bogor (Ton)', fontsize=16)
+ax.set_xlabel('Tahun', fontsize=12)
+ax.set_ylabel('Jumlah Produksi Sampah (Ton)', fontsize=12)
+start_date = pd.to_datetime(f"{df_prophet['ds'].dt.year.min()}-01-01")
+end_date = pd.to_datetime("2026-12-31")
+ax.set_xlim([start_date, end_date])
+ax.grid(True)
+ax.legend()
+
 fig1.savefig('static/grafik_prediksi.png', dpi=150, bbox_inches='tight')
-print("✅ Grafik telah disimpan sebagai 'grafik_prediksi.png' di dalam folder 'static'.")
-
-# (Opsional) Simpan data mentah ke JSON jika suatu saat dibutuhkan
-hasil_prediksi = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].copy()
-hasil_prediksi['ds'] = hasil_prediksi['ds'].dt.strftime('%Y')
-data_to_save = hasil_prediksi.to_dict(orient='records')
-with open('static/prophet_forecast.json', 'w') as f:
-    json.dump(data_to_save, f)
-print("✅ Data prediksi mentah juga disimpan sebagai 'prophet_forecast.json'.")
-
+print("✅ Grafik prediksi utama yang akurat telah disimpan.")
 
 print("\nProses Selesai.")

@@ -1,26 +1,20 @@
-// Menunggu semua konten HTML dimuat sebelum menjalankan JavaScript
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ===============================================================
-    // FUNGSI UNTUK MENGIRIM DATA FORM & MENAMPILKAN HASIL SIMULASI
-    // ===============================================================
     const formSimulasi = document.getElementById('simulasi-form');
     const hasilContainer = document.getElementById('hasil-simulasi');
 
     formSimulasi.addEventListener('submit', async function(event) {
-        // Mencegah form mengirim data dengan cara tradisional
         event.preventDefault();
 
-        // Ambil data dari setiap input
+        // Ambil data dari elemen form (dalam gram)
         const dataUntukDikirim = {
-            jumlah_botol: parseInt(document.getElementById('botol').value),
-            jumlah_kantong: parseInt(document.getElementById('kantong').value),
-            jumlah_bungkus: parseInt(document.getElementById('bungkus').value),
-            daur_ulang: parseInt(document.getElementById('daur-ulang').value)
+            organik_gram: parseInt(document.getElementById('organik').value),
+            daur_ulang_gram: parseInt(document.getElementById('daur_ulang_item').value),
+            residu_gram: parseInt(document.getElementById('residu').value),
+            kebiasaan_memilah: parseInt(document.getElementById('kebiasaan_memilah').value)
         };
 
         try {
-            // Panggil API backend kita untuk klasifikasi KNN
             const response = await fetch('/api/simulasi-pribadi', {
                 method: 'POST',
                 headers: {
@@ -35,16 +29,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const hasil = await response.json();
 
-            // Ambil lagi data angka dari form untuk perhitungan sederhana
-            const totalItemPerHari = dataUntukDikirim.jumlah_botol + dataUntukDikirim.jumlah_kantong + dataUntukDikirim.jumlah_bungkus;
-            const estimasiTotalItem = totalItemPerHari * 500; // Asumsi 500 hari hingga akhir 2026
-
-            // Tampilkan hasil gabungan
+            // Tampilkan hasil gabungan: Penilaian AI + Prediksi Kuantitatif
             hasilContainer.innerHTML = `
                 <h3>${hasil.gelar}</h3>
                 <p>${hasil.deskripsi}</p>
                 <hr>
-                <p class="mt-3"><strong>Sebagai gambaran,</strong> kebiasaan ini setara dengan <strong>${estimasiTotalItem.toLocaleString('id-ID')} item</strong> sampah plastik hingga akhir tahun 2026.</p>
+                <p class="mt-3">
+                    <strong>Proyeksi Akumulasi Sampahmu:</strong><br>
+                    Dengan kebiasaan ini, kamu diproyeksikan akan menghasilkan sekitar
+                    <strong style="font-size: 1.2em; color: #9b2226;">${hasil.total_kg} kg</strong>
+                    sampah hingga akhir tahun 2026.
+                </p>
             `;
             hasilContainer.style.display = 'block';
 
