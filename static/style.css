@@ -56,3 +56,27 @@ body {
     height: 300px;
     width: 100%;
 }
+
+/* ====================================================== */
+/* MENIMPA GAYA TOMBOL PRIMARY AGAR SESUAI TEMA NAVBAR    */
+/* ====================================================== */
+
+.btn-primary {
+    background-color: #005f73 !important; /* Warna primary dari template */
+    border-color: #005f73 !important;     /* Warna border disamakan */
+    color: #fff !important;               /* Warna teks putih */
+}
+
+/* Efek saat kursor mouse menyentuh tombol */
+.btn-primary:hover {
+    background-color: #005f73 !important; /* Warna yang sedikit lebih gelap */
+    border-color: #005f73 !important;
+    color: #fff !important;
+}
+
+/* Mengatur gaya untuk tombol saat aktif atau fokus */
+.btn-primary:focus, .btn-primary:active {
+    background-color: #005f73 !important;
+    border-color: #005f73 !important;
+    box-shadow: 0 0 0 0.25rem rgba(0, 185, 142, 0.5) !important; /* Menambahkan shadow focus yang serasi */
+}
