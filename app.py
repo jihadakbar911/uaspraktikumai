@@ -63,10 +63,10 @@ def get_personal_simulation():
             gelar = "Sahabat Lingkungan 🌱"
             deskripsi = "Keren! Kamu sudah sangat bijak dalam mengelola sampah. Teruskan kebiasaan baikmu!"
         elif hasil_profil == 'Sedang':
-            gelar = "Pengguna Plastik Sehari-hari🚯"
-            deskripsi = "Sampah plastikmu masih di tingkat sedang. Yuk, kurangi pemakaian agar lebih ramah lingkungan!"
+            gelar = "Pengelola Bijak ⭐"
+            deskripsi = "Langkahmu sudah tepat! Kamu sudah cukup baik dalam mengelola sampah harian. Terus tingkatkan kebiasaan baik ini untuk hasil yang lebih maksimal."
         else:
-            gelar = "Pengguna Aktif Plastik ♻"
+            gelar = "Profil Darurat Sampah 🔴"
             deskripsi = "Kebiasaanmu masih menghasilkan banyak sampah. Ayo mulai ubah langkah kecil untuk bantu bumi!"
             
         total_gram_harian = data['organik_gram'] + data['daur_ulang_gram'] + data['residu_gram']
