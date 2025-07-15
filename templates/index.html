@@ -3,122 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoBogor | Prediksi Sampah AI</title>
-    
-    <!-- Bootstrap CSS -->
+    <title>EcoJaktim | Prediksi Sampah AI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome (untuk Ikon) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-
-    <!-- CSS Kustom kita -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-    <!-- Header / Navbar Sederhana -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <i class="fas fa-recycle"></i>
-                EcoBogor AI
-            </a>
+            <a class="navbar-brand fw-bold" href="/"><i class="fas fa-recycle"></i> EcoJaktim AI</a>
         </div>
     </nav>
 
-    <!-- Bagian Hero / Judul Utama -->
     <header class="hero-section text-center text-white py-5">
         <div class="container">
-            <h1 class="display-4 fw-bold">Seberapa Besar Dampak Sampah Harianmu?</h1>
-            <p class="lead col-lg-8 mx-auto">Gunakan simulasi berbasis AI untuk melihat profil dan proyeksi sampahmu hingga akhir tahun 2026.</p>
+            <h1 class="display-4 fw-bold">Masa Depan Sampah Jakarta Timur Ada di Tangan Kita</h1>
+            <p class="lead col-lg-8 mx-auto">Lihat proyeksi volume sampah berbasis AI dan cari tahu bagaimana kebiasaan harianmu dapat membuat perbedaan besar.</p>
         </div>
     </header>
 
     <main class="container my-5">
-        <div class="row g-5">
-            <!-- Kolom Kiri: Simulasi Pribadi -->
-            <div class="col-lg-6">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body p-4">
-                        <h2 class="card-title h4 fw-bold text-primary mb-3"><i class="fas fa-user-edit"></i> Simulasi Profil Sampah Harianmu</h2>
-                        <p class="card-text text-muted">Masukkan estimasi berat sampah harianmu dalam gram.</p>
-                        
-                        <!-- FORM DENGAN INPUT ANGKA -->
-                        <form id="simulasi-form">
-                            <div class="mb-3">
-                                <label for="organik" class="form-label">🌿 Sampah Organik (sisa makanan, daun) (gram/hari)</label>
-                                <input type="number" class="form-control" id="organik" value="200" min="0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="daur_ulang_item" class="form-label">♻️ Sampah Daur Ulang (botol, kertas, kaleng) (gram/hari)</label>
-                                <input type="number" class="form-control" id="daur_ulang_item" value="100" min="0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="residu" class="form-label">🗑️ Sampah Residu (sachet, styrofoam) (gram/hari)</label>
-                                <input type="number" class="form-control" id="residu" value="50" min="0" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="kebiasaan_memilah" class="form-label">Apakah kamu memilah sampah untuk didaur ulang?</label>
-                                <select class="form-select" id="kebiasaan_memilah" required>
-                                    <option value="0">Tidak</option>
-                                    <option value="1">Ya</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-warning w-100 fw-bold py-2">Lihat Hasil Analisis & Prediksi</button>
-                        </form>
-                        
-                        <div id="hasil-simulasi" class="hasil-container mt-4 p-4 rounded text-center" style="display: none;">
-                            <!-- Hasil dari AI dan perhitungan akan muncul di sini -->
+        <!-- Bagian Grafik Prediksi Kota -->
+        <section id="prediksi-kota" class="text-center">
+            <h2 class="display-6 fw-bold">Prediksi Produksi Sampah Jakarta Timur</h2>
+            <p class="lead text-muted mb-4">Proyeksi AI Prophet berdasarkan data historis produksi sampah.</p>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <img src="{{ url_for('static', filename='grafik_prediksi.png') }}" class="img-fluid rounded" alt="Grafik Prediksi Sampah Jakarta Timur">
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Kolom Kanan: Prediksi Kota -->
-            <div class="col-lg-6">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body p-4">
-                        <h2 class="card-title h4 fw-bold text-primary mb-3"><i class="fas fa-chart-line"></i> Prediksi Volume Sampah Kota Bogor</h2>
-                        <p class="card-text text-muted">Proyeksi AI Prophet berdasarkan data produksi sampah historis.</p>
-                        <!-- Menampilkan gambar PNG, bukan canvas -->
-                        <div>
-                            <img src="{{ url_for('static', filename='grafik_prediksi.png') }}" class="img-fluid rounded shadow-sm" alt="Grafik Prediksi Sampah Kota Bogor">
+        <!-- Bagian Penjelasan dan Ajakan (CTA) -->
+        <section id="penjelasan-cta" class="mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="alert alert-warning text-center p-4">
+                        <h3 class="fw-bold"><i class="fas fa-exclamation-triangle"></i> Apa Arti Grafik Ini?</h3>
+                        <p class="fs-5">Grafik di atas menunjukkan bahwa jika tidak ada perubahan signifikan, produksi sampah di Jakarta Timur diproyeksikan akan **terus NAIK**. Model AI kami memperkirakan volume sampah bisa mencapai sekitar **873,800 Ton** pada tahun 2026.</p>
+                        <hr>
+                        <p class="fs-5"><strong>Tapi ini bisa kita ubah bersama!</strong> Cari tahu dampak dari kebiasaanmu sekarang.</p>
+                        <a href="/simulasi" class="btn btn-primary btn-lg fw-bold px-5 py-3 mt-2">
+                            <i class="fas fa-calculator"></i> Simulasikan Jejak Sampahmu!
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- BAGIAN BARU YANG DITAMBAHKAN -->
+        <!-- =================================================================== -->
+        <section id="edukasi" class="mt-5">
+            <div class="card shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <h2 class="card-title h4 fw-bold text-primary mb-4"><i class="fas fa-book-open"></i> Kenapa Ini Penting?</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold">Fakta Sampah Umum</h5>
+                            <ul>
+                                <li>Sampah organik jika tertimbun menghasilkan gas metana.</li>
+                                <li>Memilah sampah adalah langkah pertama pengelolaan.</li>
+                                <li>Residu adalah jenis sampah paling sulit diolah.</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="fw-bold">Tips Mudah Mengelola Sampah</h5>
+                            <ul>
+                                <li>Buat kompos dari sampah organik.</li>
+                                <li>Setor sampah daur ulang ke bank sampah.</li>
+                                <li>Kurangi penggunaan produk dengan kemasan residu.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+        <!-- =================================================================== -->
 
-        <!-- Bagian Edukasi -->
-        <div class="card mt-5 shadow-sm">
-            <div class="card-body p-4">
-                <h2 class="card-title h4 fw-bold text-primary mb-3"><i class="fas fa-book-open"></i> Kenapa Ini Penting?</h2>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5>Fakta Sampah Umum</h5>
-                        <ul>
-                            <li>Sampah organik jika tertimbun menghasilkan gas metana.</li>
-                            <li>Memilah sampah adalah langkah pertama pengelolaan.</li>
-                            <li>Residu adalah jenis sampah paling sulit diolah.</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <h5>Tips Mudah Mengelola Sampah</h5>
-                        <ul>
-                            <li>Buat kompos dari sampah organik.</li>
-                            <li>Setor sampah daur ulang ke bank sampah.</li>
-                            <li>Kurangi penggunaan produk dengan kemasan residu.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
     <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p class="mb-0">Proyek UAS - Kelompok Anda - 2025</p>
+        <p class="mb-0">Proyek UAS - Kelompok 3 - 2025</p>
     </footer>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

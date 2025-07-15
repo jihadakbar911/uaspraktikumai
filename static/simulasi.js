@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         try {
+            // Panggil API backend kita untuk klasifikasi KNN
             const response = await fetch('/api/simulasi-pribadi', {
                 method: 'POST',
                 headers: {
