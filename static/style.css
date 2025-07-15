@@ -43,12 +43,12 @@ body {
 
 /* Kustomisasi hasil simulasi */
 .hasil-container {
-    background-color: #e9d8a6;
-    border-left: 5px solid #ca6702;
+    background-color: #faeec8;
+    border-left: 5px solid #faeec8;
 }
 .hasil-container h3 {
     font-weight: 700;
-    color: #9b2226;
+    color: #000000;
 }
 
 .chart-container {

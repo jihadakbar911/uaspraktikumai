@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="mt-3">
                     <strong>Proyeksi Akumulasi Sampahmu:</strong><br>
                     Dengan kebiasaan ini, kamu diproyeksikan akan menghasilkan sekitar
-                    <strong style="font-size: 1.2em; color: #9b2226;">${hasil.total_kg} kg</strong>
+                    <strong style="font-size: 1.2em; font-weight: bold;">${hasil.total_kg} kg</strong>
                     sampah hingga akhir tahun 2026.
                 </p>
             `;
