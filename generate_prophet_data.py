@@ -1,11 +1,12 @@
 # ===================================================================
-# GENERATE PROPHET DATA & GRAFIK (DENGAN DATA PENDUDUK DAN EVALUASI)
+# GENERATE PROPHET DATA & SEMUA GRAFIK (PREDIKSI + EVALUASI)
 # ===================================================================
 
 import pandas as pd
 from prophet import Prophet
-# Impor library untuk cross-validation dan performance metrics
 from prophet.diagnostics import cross_validation, performance_metrics
+# Impor untuk membuat plot cross-validation
+from prophet.plot import plot_cross_validation_metric
 import matplotlib.pyplot as plt
 
 print("Memulai proses pra-kalkulasi dengan dataset JAKARTA TIMUR dan data PENDUDUK...")
@@ -25,16 +26,13 @@ except FileNotFoundError as e:
     print(f"   Detail: {e}")
     exit()
 
-# Variabel untuk nama kolom data sampah
+# Variabel untuk nama kolom
 NAMA_KOLOM_TAHUN_SAMPAH = 'tahun'
 NAMA_KOLOM_VOLUME = 'timbulan_sampah_tahunan(ton)'
-
-# Variabel untuk nama kolom data penduduk
 NAMA_KOLOM_TAHUN_PENDUDUK = 'tahun'
 NAMA_KOLOM_PENDUDUK = 'jumlah_penduduk_jakarta_timur'
 
-
-# Fungsi pembersihan data yang lebih akurat
+# 2. Membersihkan dan mempersiapkan data
 print("Membersihkan dan menggabungkan data...")
 def clean_numeric_advanced(value):
     s_value = str(value)
@@ -50,14 +48,12 @@ def clean_numeric_advanced(value):
         cleaned_value = s_value
     return pd.to_numeric(cleaned_value.replace(',', ''), errors='coerce')
 
-# Terapkan pembersihan pada kedua dataset
 df_sampah[NAMA_KOLOM_VOLUME] = df_sampah[NAMA_KOLOM_VOLUME].apply(clean_numeric_advanced)
 df_sampah.dropna(subset=[NAMA_KOLOM_VOLUME], inplace=True)
 
 df_penduduk[NAMA_KOLOM_PENDUDUK] = df_penduduk[NAMA_KOLOM_PENDUDUK].apply(clean_numeric_advanced)
 df_penduduk.dropna(subset=[NAMA_KOLOM_PENDUDUK], inplace=True)
 print("✅ Data numerik di kedua dataset telah dibersihkan.")
-
 
 # Gabungkan kedua dataset
 df_gabungan = pd.merge(df_sampah, df_penduduk, left_on=NAMA_KOLOM_TAHUN_SAMPAH, right_on=NAMA_KOLOM_TAHUN_PENDUDUK)
@@ -66,67 +62,53 @@ df_gabungan = pd.merge(df_sampah, df_penduduk, left_on=NAMA_KOLOM_TAHUN_SAMPAH, 
 df_prophet = df_gabungan.rename(columns={
     NAMA_KOLOM_TAHUN_SAMPAH: 'ds',
     NAMA_KOLOM_VOLUME: 'y',
-    NAMA_KOLOM_PENDUDUK: 'jumlah_penduduk' # Kolom regresor
+    NAMA_KOLOM_PENDUDUK: 'jumlah_penduduk'
 })
 df_prophet = df_prophet[['ds', 'y', 'jumlah_penduduk']]
 df_prophet['ds'] = pd.to_datetime(df_prophet['ds'].astype(str) + '-12-31')
 print("✅ Data telah digabungkan dan diformat untuk Prophet.")
 
-print("\n--- DATA GABUNGAN YANG DIGUNAKAN ---")
-print(df_prophet)
-print("------------------------------------\n")
-
 # 3. Latih model Prophet dengan regresor
 model_prophet = Prophet(yearly_seasonality=False, weekly_seasonality=False, daily_seasonality=False)
-model_prophet.add_regressor('jumlah_penduduk') # Menambahkan penduduk sebagai faktor
+model_prophet.add_regressor('jumlah_penduduk')
 model_prophet.fit(df_prophet)
-print("✅ Model Prophet berhasil dilatih dengan regresor penduduk.")
+print("✅ Model Prophet berhasil dilatih.")
 
-# ===================================================================
-# BAGIAN BARU: Melakukan Cross-Validation untuk Evaluasi Model
-# ===================================================================
+# 4. Melakukan Cross-Validation untuk Evaluasi Model
 print("\nMemulai proses evaluasi model dengan Cross-Validation...")
 try:
-    # initial: 3 tahun pertama data digunakan untuk training awal
-    # period: setiap iterasi, data training ditambah 1 tahun
-    # horizon: memprediksi 1 tahun ke depan
     df_cv = cross_validation(model_prophet, initial='1095 days', period='365 days', horizon='365 days', disable_tqdm=True)
-    
-    # Hitung metrik performa dari hasil cross-validation
     df_p = performance_metrics(df_cv)
     print("\n--- HASIL EVALUASI MODEL PROPHET (Cross-Validation) ---")
     print(df_p.head())
     print("---------------------------------------------------------")
-    print("Penjelasan: 'mape' adalah Mean Absolute Percentage Error (rata-rata persentase kesalahan).")
-    print("Semakin kecil nilainya, semakin akurat modelnya.")
+    
+    # Membuat dan Menyimpan Grafik Evaluasi
+    print("Membuat dan menyimpan grafik evaluasi (cross-validation)...")
+    fig_cv = plot_cross_validation_metric(df_cv, metric='mape')
+    ax_cv = fig_cv.gca()
+    ax_cv.set_title('Evaluasi Model Prophet (MAPE)', fontsize=16)
+    ax_cv.set_xlabel('Horizon (Jarak Prediksi)', fontsize=12)
+    ax_cv.set_ylabel('MAPE (Error %)', fontsize=12)
+    fig_cv.savefig('static/grafik_evaluasi_prophet.png', dpi=150, bbox_inches='tight')
+    print("✅ Grafik evaluasi telah disimpan sebagai 'grafik_evaluasi_prophet.png'.")
 
 except Exception as e:
     print(f"\n⚠️ Gagal melakukan Cross-Validation. Kemungkinan data historis terlalu sedikit. Error: {e}")
-    print("   Evaluasi model Prophet akan dilewati.")
-# ===================================================================
 
-
-# 4. Buat frame prediksi masa depan
+# 5. Membuat prediksi masa depan untuk grafik utama
 tahun_terakhir_data = df_prophet['ds'].dt.year.max()
 tahun_untuk_diprediksi = 2026 - tahun_terakhir_data
 future = model_prophet.make_future_dataframe(periods=tahun_untuk_diprediksi, freq='YE')
-
-# Estimasi populasi untuk masa depan
-pertumbuhan_penduduk_rata2 = df_prophet['jumlah_penduduk'].diff().mean()
-populasi_terakhir = df_prophet['jumlah_penduduk'].iloc[-1]
-populasi_masa_depan = [populasi_terakhir + (pertumbuhan_penduduk_rata2 * i) for i in range(1, tahun_untuk_diprediksi + 1)]
-future['jumlah_penduduk'] = list(df_prophet['jumlah_penduduk']) + populasi_masa_depan
-
-# 5. Lakukan prediksi
+future['jumlah_penduduk'] = list(df_prophet['jumlah_penduduk']) + [df_prophet['jumlah_penduduk'].iloc[-1]] * tahun_untuk_diprediksi # Estimasi sederhana
 forecast = model_prophet.predict(future)
-print("\n✅ Prediksi masa depan telah dibuat.")
+print("\n✅ Prediksi masa depan untuk grafik telah dibuat.")
 
-# 6. Menggambar grafik
-print("\nMembuat dan menyimpan grafik prediksi baru...")
+# 6. Menggambar grafik prediksi utama
+print("\nMembuat dan menyimpan grafik prediksi utama...")
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.plot(forecast['ds'], forecast['yhat'], 'b-', label='Forecast')
-ax.fill_between(forecast['ds'], forecast['yhat_lower'], forecast['yhat_upper'],
-                color='skyblue', alpha=0.3, label='Uncertainty Interval')
+ax.fill_between(forecast['ds'], forecast['yhat_lower'], forecast['yhat_upper'], color='skyblue', alpha=0.3, label='Uncertainty Interval')
 ax.plot(df_prophet['ds'], df_prophet['y'], 'k.', markersize=8, label='Data Asli')
 ax.set_title('Prediksi Produksi Sampah Jakarta Timur (Ton)', fontsize=16)
 ax.set_xlabel('Tahun', fontsize=12)
@@ -137,7 +119,7 @@ ax.set_xlim([start_date, end_date])
 ax.grid(True, linestyle='--', alpha=0.6)
 ax.legend()
 fig.savefig('static/grafik_prediksi.png', dpi=150, bbox_inches='tight')
-print("✅ Grafik baru untuk Jakarta Timur telah disimpan.")
+print("✅ Grafik prediksi utama telah disimpan.")
 
 # Menampilkan hasil prediksi angka untuk tahun 2026
 try:

@@ -1,34 +1,72 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
+/* =================================================================== */
+/* BAGIAN YANG DIPERBAIKI: Mengembalikan background menjadi putih polos */
+/* =================================================================== */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f8f9fa; /* Warna latar belakang dari Bootstrap */
+    background-color: #ffffff; /* Warna diubah menjadi putih bersih */
 }
+/* =================================================================== */
 
-/* Bagian Hero dengan warna gradien */
+
+/* Bagian Hero dengan gambar */
 .hero-section {
-    background: linear-gradient(90deg, #005f73, #0a9396);
+    /* Gambar background dengan overlay gelap sederhana untuk keterbacaan teks */
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url("gunung_sampah.jpg");
+    
+    background-size: cover;
+    background-position: center;
+    color: white;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Kustomisasi warna utama */
+
+/* Warna Primer: Abu-abu Gelap Kebiruan */
 .bg-primary {
-    background-color: #005f73 !important;
+    background-color: #2F4F4F !important;
 }
 
 .text-primary {
-    color: #005f73 !important;
+    color: #2F4F4F !important;
 }
 
-/* Kustomisasi tombol */
+/* =================================================================== */
+/* BAGIAN BARU: Menambahkan efek hover pada navbar */
+/* =================================================================== */
+.navbar .nav-link {
+    transition: background-color 0.2s ease-in-out;
+    border-radius: 5px;
+}
+
+.navbar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+/* =================================================================== */
+
+
+/* Warna Tombol Aksen: Coklat Karat */
 .btn-warning {
-    background-color: #ee9b00;
-    border-color: #ee9b00;
+    background-color: #2F4F4F;
+    border-color: #2F4F4F;
     color: white;
 }
 
 .btn-warning:hover {
-    background-color: #ca6702;
-    border-color: #ca6702;
+    background-color: #3b6464;
+    border-color: #3b6464;
+}
+
+/* Warna Kotak Peringatan/Ajakan */
+.custom-alert {
+    background-color: #f5f0e1;
+    border-left: 5px solid #A0522D;
+    color: #333;
 }
 
 /* Kustomisasi kartu */
@@ -43,40 +81,17 @@ body {
 
 /* Kustomisasi hasil simulasi */
 .hasil-container {
-    background-color: #faeec8;
-    border-left: 5px solid #faeec8;
+    background-color: #f5f0e1;
+    border: 1px solid #e0d2b4;
 }
+
 .hasil-container h3 {
     font-weight: 700;
     color: #000000;
 }
 
-.chart-container {
-    position: relative;
-    height: 300px;
-    width: 100%;
-}
-
-/* ====================================================== */
-/* MENIMPA GAYA TOMBOL PRIMARY AGAR SESUAI TEMA NAVBAR    */
-/* ====================================================== */
-
-.btn-primary {
-    background-color: #005f73 !important; /* Warna primary dari template */
-    border-color: #005f73 !important;     /* Warna border disamakan */
-    color: #fff !important;               /* Warna teks putih */
-}
-
-/* Efek saat kursor mouse menyentuh tombol */
-.btn-primary:hover {
-    background-color: #005f73 !important; /* Warna yang sedikit lebih gelap */
-    border-color: #005f73 !important;
-    color: #fff !important;
-}
-
-/* Mengatur gaya untuk tombol saat aktif atau fokus */
-.btn-primary:focus, .btn-primary:active {
-    background-color: #005f73 !important;
-    border-color: #005f73 !important;
-    box-shadow: 0 0 0 0.25rem rgba(0, 185, 142, 0.5) !important; /* Menambahkan shadow focus yang serasi */
+.hasil-angka-penting {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #8B4513;
 }
