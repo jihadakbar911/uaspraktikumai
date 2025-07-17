@@ -3,89 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hasil Prediksi Model</title>
+    <title>Analisis Model | Jaga Jaktim</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Memuat library Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </head>
-<body>
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+<body style="background-color: var(--light-gray-bg); color: var(--dark-text);">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/"><i class="fas fa-recycle"></i> Jaga Jaktim</a>
+            <a class="navbar-brand fs-4" href="/"><i class="fas fa-recycle me-2"></i>Jaga Jaktim</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Beranda</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/prediksi">Prediksi Model</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/edukasi">Edukasi & Simulasi</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/prediksi">Analisis Model</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/edukasi">Edukasi</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <main class="container my-5">
-        <div class="text-center mb-5">
-            <h1 class="display-5 fw-bold">Hasil Prediksi & Evaluasi Model AI</h1>
-            <p class="lead text-muted">Berikut adalah hasil teknis dan evaluasi dari kedua model kecerdasan buatan yang kami kembangkan.</p>
+    <!-- Konten Utama -->
+    <main class="container section-padding">
+        <div class="text-center">
+            <h1 class="section-title mb-3" style="color: var(--primary-green);">Hasil Analisis & Evaluasi Model AI</h1>
+            <p class="section-subtitle col-lg-8 mx-auto" style="color: var(--light-text);">Berikut adalah hasil teknis dari kedua model kecerdasan buatan yang kami kembangkan untuk memastikan transparansi dan validitas penelitian.</p>
         </div>
 
-        <div class="row g-4">
-            <!-- Card untuk Grafik Prediksi Utama -->
+        <!-- =================================================================== -->
+        <!-- BAGIAN YANG DIPERBARUI SESUAI SKETSA ANDA -->
+        <!-- =================================================================== -->
+        <div class="row g-4 mt-5">
+            <!-- Grafik Prediksi Utama -->
             <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-header fw-bold">Grafik Prediksi Produksi Sampah (Model Prophet)</div>
-                    <div class="card-body">
-                        <div class="text-center">
-                            <img src="{{ url_for('static', filename='grafik_prediksi.png') }}" class="img-fluid rounded border" alt="Grafik Prediksi Sampah">
-                        </div>
-                        <hr>
-                        <h6 class="fw-bold">Penjelasan Grafik:</h6>
-                        <p class="card-text text-muted">Grafik ini memvisualisasikan hasil prediksi volume sampah di Jakarta Timur.<ul><li><strong>Titik Hitam (Data Asli):</strong> Menunjukkan data produksi sampah historis yang sebenarnya.</li><li><strong>Garis Biru (Forecast):</strong> Adalah garis tren prediksi yang dihitung oleh model AI, menunjukkan arah pergerakan di masa depan.</li><li><strong>Area Biru Muda (Uncertainty Interval):</strong> Merupakan rentang ketidakpastian. Model memprediksi bahwa hasil di masa depan kemungkinan besar akan berada di dalam area ini.</li></ul></p>
+                <div class="custom-card no-rotate-effect" style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+                    <h5 class="fw-bold mb-3" style="color: var(--primary-green);">Grafik Interaktif Prediksi Produksi Sampah</h5>
+                    <p class="section-subtitle" style="color: var(--dark-text);">Grafik ini menampilkan data asli produksi sampah (hijau tua) dibandingkan dengan hasil prediksi model Prophet (hijau muda). Ini menunjukkan kemampuan model dalam menangkap tren kenaikan data historis dan memproyeksikannya ke masa depan.</p>
+                    <hr style="border-color: var(--border-color);">
+                    <div style="height: 450px;">
+                        <canvas id="grafikPrediksiInteraktif"></canvas>
                     </div>
                 </div>
             </div>
-
-            <!-- Card untuk Evaluasi Prophet -->
+            
+            <!-- Evaluasi Model -->
             <div class="col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header fw-bold">Evaluasi Model Prophet (MAPE)</div>
-                    <div class="card-body">
-                        <div class="text-center">
-                            <!-- PERBAIKAN: Menambahkan gambar tabel hasil evaluasi -->
-                            <img src="{{ url_for('static', filename='grafik_evaluasi_prophet.png') }}" class="img-fluid rounded border" alt="Grafik Evaluasi Prophet">
-                             <img src="{{ url_for('static', filename='mape.png') }}" class="img-fluid rounded border mb-3" alt="Tabel Hasil Evaluasi Prophet">
-                        </div>
-                        <hr>
-                        <h6 class="fw-bold">Penjelasan Grafik:</h6>
-                        <p class="card-text text-muted">Grafik dan tabel di atas adalah "nilai rapor" untuk model prediksi kami. Ini menunjukkan <strong>tingkat kesalahan (MAPE)</strong> saat model diuji dengan data masa lalu. Garis biru yang rendah dan stabil menandakan bahwa model kami sangat akurat, dengan tingkat akurasi sekitar 96% (berdasarkan nilai MAPE di bawah 4%).</p>
+                <div class="custom-card h-100 no-rotate-effect" style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+                    <h5 class="fw-bold" style="color: var(--primary-green);">Evaluasi Model Prophet (MAPE)</h5>
+                    <hr style="border-color: var(--border-color);">
+                    <div class="text-center evaluation-img-container">
+                        <img src="{{ url_for('static', filename='grafik_evaluasi_prophet.png') }}" class="img-fluid evaluation-img" alt="Grafik Evaluasi Prophet">
                     </div>
+                    <p class="section-subtitle mt-3" style="color: var(--dark-text);">Grafik ini menunjukkan tingkat kesalahan (MAPE) model Prophet. Hasilnya membuktikan model sangat akurat dengan tingkat akurasi sekitar 96%.</p>
                 </div>
             </div>
-
-            <!-- Card untuk Evaluasi KNN -->
             <div class="col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header fw-bold">Evaluasi Model Klasifikasi (Confusion Matrix)</div>
-                    <div class="card-body">
-                        <div class="text-center">
-                            <img src="{{ url_for('static', filename='grafik_confusion_matrix.png') }}" class="img-fluid rounded border" alt="Grafik Confusion Matrix KNN">
-                        </div>
-                        <hr>
-                        <h6 class="fw-bold">Penjelasan Grafik:</h6>
-                        <p class="card-text text-muted">Grafik ini adalah "nilai rapor" untuk model klasifikasi profil pengguna. Angka-angka pada <strong>diagonal dari kiri atas ke kanan bawah</strong> menunjukkan jumlah tebakan yang benar untuk setiap kategori ('Tinggi', 'Sedang', 'Rendah'). Semakin tinggi angka diagonal, semakin akurat modelnya dalam mengenali setiap profil.</p>
+                <div class="custom-card h-100 no-rotate-effect" style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+                    <h5 class="fw-bold" style="color: var(--primary-green);">Evaluasi Model Klasifikasi (Confusion Matrix)</h5>
+                    <hr style="border-color: var(--border-color);">
+                    <div class="text-center evaluation-img-container">
+                        <img src="{{ url_for('static', filename='grafik_confusion_matrix.png') }}" class="img-fluid evaluation-img" alt="Grafik Confusion Matrix KNN">
                     </div>
+                    <p class="section-subtitle mt-3" style="color: var(--dark-text);">Grafik ini menunjukkan performa detail model KNN. Angka pada diagonal (kiri atas ke kanan bawah) adalah jumlah tebakan yang benar untuk setiap kategori.</p>
                 </div>
             </div>
         </div>
+        <!-- =================================================================== -->
     </main>
 
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p class="mb-0">Proyek UAS - Kelompok 3 - 2025</p>
+    <!-- Footer -->
+    <footer class="text-center" style="background: var(--dark-green); color: #fff;">
+        <p class="text-light my-auto" style="color: #fff !important;">&copy; 2025 Jaga Jaktim - Proyek UAS Kelompok 3</p>
     </footer>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Memanggil file JavaScript baru untuk grafik -->
+    <script src="{{ url_for('static', filename='grafik_interaktif.js') }}"></script>
 </body>
 </html>

@@ -1,97 +1,179 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+/* Import Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-/* =================================================================== */
-/* BAGIAN YANG DIPERBAIKI: Mengembalikan background menjadi putih polos */
-/* =================================================================== */
+/* Variabel Warna Baru */
+:root {
+    --primary-green: #28a745; /* Bootstrap Success Green */
+    --dark-green: #198754;
+    --light-gray-bg: #f8f9fa;
+    --dark-text: #212529;
+    --light-text: #6c757d;
+    --card-bg: #ffffff;
+    --border-color: #dee2e6;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #ffffff; /* Warna diubah menjadi putih bersih */
+    background-color: var(--light-gray-bg);
+    color: var(--dark-text);
+    font-size: 16px;
 }
-/* =================================================================== */
 
+/* Helper & Section Styling */
+.section-padding {
+    padding: 80px 0;
+}
 
-/* Bagian Hero dengan gambar */
+.section-title {
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--light-text);
+}
+
+/* Navbar */
+.navbar-custom {
+    background-color: var(--card-bg);
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,.05);
+}
+.navbar-custom .navbar-brand {
+    font-weight: 700;
+    color: var(--primary-green);
+}
+.navbar-custom .nav-link {
+    color: var(--dark-text);
+    font-weight: 500;
+    transition: color 0.3s;
+    padding: 8px 15px;
+}
+.navbar-custom .nav-link:hover, .navbar-custom .nav-link.active {
+    color: var(--primary-green);
+}
+
+/* Hero Section */
 .hero-section {
-    /* Gambar background dengan overlay gelap sederhana untuk keterbacaan teks */
-    background-image: 
-        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-        url("gunung_sampah.jpg");
-    
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("{{ url_for('static', filename='gunung_sampah.jpg') }}") no-repeat center center;
     background-size: cover;
-    background-position: center;
+    padding: 100px 0;
+    text-align: center;
     color: white;
-    min-height: 60vh;
+}
+.hero-section .display-4 {
+    font-weight: 700;
+}
+
+/* Card Styling */
+.custom-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* "Tahukah Kamu?" Section */
+#fakta .display-3 {
+    font-weight: 700;
+    color: var(--primary-green);
+}
+#fakta .fact-item i {
+    font-size: 2.5rem;
+    color: var(--primary-green);
+    margin-bottom: 10px;
+}
+
+/* Carousel/Slider */
+.carousel-item img {
+    height: 450px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* CTA Section */
+.cta-section {
+    background-color: var(--dark-green);
+    border-radius: 15px;
+    color: white;
+}
+.btn-cta {
+    background-color: #ffc107; /* Kuning untuk kontras */
+    color: var(--dark-text);
+    font-weight: 600;
+    padding: 15px 30px;
+    border-radius: 50px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+}
+.btn-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0, 0.2);
+    color: var(--dark-text);
+}
+
+/* Footer */
+footer {
+    background-color: #343a40;
+    color: var(--light-text);
+    padding: 30px 0;
+    font-size: 0.9rem;
+}
+
+/* Gaya untuk gambar evaluasi */
+.evaluation-img-container {
+    height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+}
+.evaluation-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 
-/* Warna Primer: Abu-abu Gelap Kebiruan */
-.bg-primary {
-    background-color: #2F4F4F !important;
+
+/* Interaktif Card Hover Effect */
+.custom-card,
+.feature-card {
+    transition: transform 0.25s cubic-bezier(.4,2,.6,1), box-shadow 0.25s cubic-bezier(.4,2,.6,1);
+    will-change: transform, box-shadow;
+}
+.custom-card:hover,
+.feature-card:hover {
+    transform: translateY(-10px) scale(1.035) rotateZ(-1deg);
+    box-shadow: 0 8px 32px 0 rgba(40, 167, 69, 0.18), 0 2px 8px 0 rgba(0,0,0,0.10);
+    z-index: 2;
+}
+.feature-card:hover .feature-img-container {
+    box-shadow: 0 4px 24px rgba(40,167,69,0.18);
+    transition: box-shadow 0.25s;
+}
+.custom-card:active,
+.feature-card:active {
+    transform: translateY(-2px) scale(0.98);
+}
+/* Optional: pointer cursor for interaktif feel */
+.custom-card,
+.feature-card {
+    cursor: pointer;
 }
 
-.text-primary {
-    color: #2F4F4F !important;
+/* Hilangkan efek miring pada hover khusus di section ini */
+.no-rotate-effect.custom-card:hover {
+    transform: translateY(-10px) scale(1.035); /* hanya bergerak, tidak rotate */
+    box-shadow: 0 8px 32px 0 rgba(40, 167, 69, 0.18), 0 2px 8px 0 rgba(0,0,0,0.10);
+    z-index: 2;
 }
-
-/* =================================================================== */
-/* BAGIAN BARU: Menambahkan efek hover pada navbar */
-/* =================================================================== */
-.navbar .nav-link {
-    transition: background-color 0.2s ease-in-out;
-    border-radius: 5px;
-}
-
-.navbar .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-/* =================================================================== */
-
-
-/* Warna Tombol Aksen: Coklat Karat */
-.btn-warning {
-    background-color: #2F4F4F;
-    border-color: #2F4F4F;
-    color: white;
-}
-
-.btn-warning:hover {
-    background-color: #3b6464;
-    border-color: #3b6464;
-}
-
-/* Warna Kotak Peringatan/Ajakan */
-.custom-alert {
-    background-color: #f5f0e1;
-    border-left: 5px solid #A0522D;
-    color: #333;
-}
-
-/* Kustomisasi kartu */
-.card {
-    border: none;
-    transition: transform 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
-/* Kustomisasi hasil simulasi */
-.hasil-container {
-    background-color: #f5f0e1;
-    border: 1px solid #e0d2b4;
-}
-
-.hasil-container h3 {
-    font-weight: 700;
-    color: #000000;
-}
-
-.hasil-angka-penting {
-    font-size: 1.2em;
-    font-weight: 700;
-    color: #8B4513;
+.no-rotate-effect.custom-card:active {
+    transform: translateY(-2px) scale(0.98);
 }
