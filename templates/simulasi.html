@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi | Jaga Jaktim</title>
+    <title>Simulasi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -51,11 +51,44 @@
                         </div>
                         <div class="mb-3">
                             <label for="kebiasaan_memilah" class="form-label fw-bold" style="color: var(--dark-text);">Apakah kamu memilah sampah?</label>
-                            <select class="form-select" id="kebiasaan_memilah" required style="background-color: var(--input-bg); color: var(--dark-text); border: 1px solid var(--border-color); transition: none;">
-                                <option value="0">Tidak</option>
-                                <option value="1">Ya</option>
-                            </select>
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn btn-outline-success pilih-memilah-btn flex-fill" data-value="0" style="background-color: var(--input-bg); color: var(--dark-text); border: 1.5px solid #198754; transition: background 0.2s, color 0.2s, border 0.2s;">Tidak</button>
+                                <button type="button" class="btn btn-outline-success pilih-memilah-btn flex-fill" data-value="1" style="background-color: var(--input-bg); color: var(--dark-text); border: 1.5px solid #198754; transition: background 0.2s, color 0.2s, border 0.2s;">Ya</button>
+                            </div>
+                            <input type="hidden" id="kebiasaan_memilah" name="kebiasaan_memilah" value="0">
                         </div>
+                        <script>
+                        // Hover effect handled by Bootstrap, but we add active selection
+                        document.querySelectorAll('.pilih-memilah-btn').forEach(function(btn) {
+                            btn.addEventListener('click', function() {
+                                document.getElementById('kebiasaan_memilah').value = btn.getAttribute('data-value');
+                                document.querySelectorAll('.pilih-memilah-btn').forEach(function(b) {
+                                    b.classList.remove('active');
+                                    b.style.backgroundColor = 'var(--input-bg)';
+                                    b.style.color = 'var(--dark-text)';
+                                });
+                                btn.classList.add('active');
+                                btn.style.backgroundColor = 'var(--primary-green)';
+                                btn.style.color = '#fff';
+                            });
+                            btn.addEventListener('mouseenter', function() {
+                                if (!btn.classList.contains('active')) {
+                                    btn.style.backgroundColor = 'rgba(25,135,84,0.08)';
+                                    btn.style.color = 'var(--primary-green)';
+                                }
+                            });
+                            btn.addEventListener('mouseleave', function() {
+                                if (!btn.classList.contains('active')) {
+                                    btn.style.backgroundColor = 'var(--input-bg)';
+                                    btn.style.color = 'var(--dark-text)';
+                                }
+                            });
+                        });
+                        // Set default active
+                        document.querySelector('.pilih-memilah-btn[data-value="0"]').classList.add('active');
+                        document.querySelector('.pilih-memilah-btn[data-value="0"]').style.backgroundColor = 'var(--primary-green)';
+                        document.querySelector('.pilih-memilah-btn[data-value="0"]').style.color = '#fff';
+                        </script>
                         <button type="submit" class="btn btn-cta w-100 fw-bold py-2 mt-3" style="background-color: var(--primary-green); color: #fff; transition: none;">Lihat Hasil Analisis</button>
                     </form>
                     

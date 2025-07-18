@@ -3,7 +3,7 @@
 
 /* Variabel Warna Baru */
 :root {
-    --primary-green: #28a745; /* Bootstrap Success Green */
+    --primary-green: #198754;
     --dark-green: #198754;
     --light-gray-bg: #f8f9fa;
     --dark-text: #212529;
@@ -101,7 +101,7 @@ body {
     color: white;
 }
 .btn-cta {
-    background-color: #ffc107; /* Kuning untuk kontras */
+    background-color: #22a166; /* Kuning untuk kontras */
     color: var(--dark-text);
     font-weight: 600;
     padding: 15px 30px;
