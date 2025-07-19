@@ -129,45 +129,60 @@
         </section>
 
         <!-- =================================================================== -->
-        <!-- BAGIAN BARU: Infografis Edukasi -->
-        <!-- =================================================================== -->
-        <section id="infografis-edukasi" class="section-padding" style="background-color: #fff;">
-            <div class="container">
-                <div class="text-center mb-4">
-                    <h2 class="section-title mb-3" style="color: #198754;">Saatnya Lebih Bijak Kelola Sampahmu!</h2>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <img src="{{ url_for('static', filename='Gambar1.png') }}" 
-                            class="img-fluid rounded mx-auto d-block infografis-animasi-hover mb-4" 
-                            alt="Infografis Bahaya Sampah"
-                            style="transition: transform 0.4s cubic-bezier(.4,2,.6,1), box-shadow 0.4s cubic-bezier(.4,2,.6,1); box-shadow: 0 2px 16px rgba(33,37,41,0.08);">
-                        <img src="{{ url_for('static', filename='Gambar1.2.png') }}" 
-                            class="img-fluid rounded mx-auto d-block infografis-animasi-hover mb-4" 
-                            alt="Infografis Bahaya Sampah (Lanjutan)"
-                            style="transition: transform 0.4s cubic-bezier(.4,2,.6,1), box-shadow 0.4s cubic-bezier(.4,2,.6,1); box-shadow: 0 2px 16px rgba(33,37,41,0.08);">
-                        <img src="{{ url_for('static', filename='Gambar2.png') }}" 
-                            class="img-fluid rounded mx-auto d-block infografis-animasi-hover" 
-                            alt="Infografis Edukasi Sampah Lainnya"
-                            style="transition: transform 0.4s cubic-bezier(.4,2,.6,1), box-shadow 0.4s cubic-bezier(.4,2,.6,1); box-shadow: 0 2px 16px rgba(33,37,41,0.08);">
-                    </div>
-                </div>
+    <!-- BAGIAN BARU: Infografis Edukasi -->
+    <!-- =================================================================== -->
+    <section id="infografis-edukasi" class="section-padding" style="background-color: #fff;">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title mb-3" style="color: #198754;">Saatnya Lebih Bijak Kelola Sampahmu!</h2>
             </div>
-        </section>
-        <style>
-            .infografis-animasi-hover:hover {
-                transform: scale(1.045) rotateZ(-2deg);
-                box-shadow: 0 8px 32px 0 rgba(40, 167, 69, 0.18), 0 2px 8px 0 rgba(0,0,0,0.10);
-                z-index: 2;
-            }
-            .infografis-animasi-hover:active {
-                transform: scale(0.98);
-            }
-            .infografis-animasi-hover {
-                cursor: pointer;
-            }
-        </style>
-        <!-- =================================================================== -->
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 mb-4" style="border-radius: 18px;">
+                        <div class="card-body p-3" style="background: #f8f9fa; border-radius: 18px;">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-12">
+                                    <img src="{{ url_for('static', filename='Gambar.png') }}" 
+                                         class="img-fluid rounded mx-auto d-block infografis-animasi-hover"
+                                         alt="Infografis Bahaya Sampah Gabungan"
+                                         style="transition: transform 0.4s cubic-bezier(.4,2,.6,1), box-shadow 0.4s cubic-bezier(.4,2,.6,1); box-shadow: 0 2px 16px rgba(33,37,41,0.08);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm border-0 mb-4" style="border-radius: 18px;">
+                        <div class="card-body p-3" style="background: #f8f9fa; border-radius: 18px;">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-12 mb-3">
+                                    <img src="{{ url_for('static', filename='Gambar2.png') }}" 
+                                         class="img-fluid rounded mx-auto d-block infografis-animasi-hover" 
+                                         alt="Infografis Edukasi Sampah Lainnya"
+                                         style="transition: transform 0.4s cubic-bezier(.4,2,.6,1), box-shadow 0.4s cubic-bezier(.4,2,.6,1); box-shadow: 0 2px 16px rgba(33,37,41,0.08);">
+                                </div>
+                                <div class="col-12">
+                                    <img src="{{ url_for('static', filename='Gambar 3.png') }}" 
+                                         class="img-fluid rounded mx-auto d-block infografis-animasi-hover" 
+                                         alt="Infografis Edukasi Sampah Tambahan"
+                                         style="transition: transform 0.4s cubic-bezier(.4,2,.6,1), box-shadow 0.4s cubic-bezier(.4,2,.6,1); box-shadow: 0 2px 16px rgba(33,37,41,0.08);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+     </section>
+    <style>
+        .infografis-animasi-hover:hover {
+            transform: scale(1.045) rotateZ(-2deg);
+            box-shadow: 0 8px 32px 0 rgba(40, 167, 69, 0.18), 0 2px 8px 0 rgba(0,0,0,0.10);
+            z-index: 2;
+        }
+        .infografis-animasi-hover:active {
+            transform: scale(0.98);
+        }
+        .infografis-animasi-hover {
+            cursor: pointer;
+        }
+    </style>
+    <!-- =================================================================== -->
     </main>
 
     <footer class="footer mt-auto py-3" style="background: var(--dark-green); color: #fff;">
