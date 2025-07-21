@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi Sampah Berdasarkan Input User</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body style="background-color: var(--light-gray-bg); color: var(--dark-text);">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand fs-4" href="/"><i class="fas fa-recycle me-2"></i>Jaga Jaktim</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/prediksi">Analisis Model</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/prediksi-user">Prediksi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/edukasi">Edukasi</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main class="container section-padding">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Card statis tanpa animasi/efek apapun -->
+                <div class="custom-card" style="background-color: var(--card-bg); border: 1px solid var(--border-color); box-shadow: 0 4px 24px rgba(33,37,41,0.08); transition: none; transform: none;">
+                    <div class="text-center">
+                        <h2 class="section-title mb-3" style="color: var(--primary-green);">Prediksi Sampah Berdasarkan Input User</h2>
+                        <p class="section-subtitle mb-4" style="color: var(--light-text);">Masukkan jumlah sampah, jumlah penduduk, dan tahun yang ingin diprediksi. Prediksi bisa untuk tahun sebelumnya maupun tahun-tahun mendatang.</p>
+                    </div>
+                    <form id="prediksi-user-form">
+                        <div class="mb-3">
+                            <label for="jumlah_sampah" class="form-label fw-bold" style="color: var(--dark-text);">Jumlah Sampah (ton/tahun)</label>
+                            <input type="number" class="form-control" id="jumlah_sampah" name="jumlah_sampah" min="0" required style="background-color: var(--input-bg); color: var(--dark-text); border: 1px solid var(--border-color); transition: none;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="jumlah_penduduk" class="form-label fw-bold" style="color: var(--dark-text);">Jumlah Penduduk (jiwa/tahun)</label>
+                            <input type="number" class="form-control" id="jumlah_penduduk" name="jumlah_penduduk" min="0" required style="background-color: var(--input-bg); color: var(--dark-text); border: 1px solid var(--border-color); transition: none;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="tahun" class="form-label fw-bold" style="color: var(--dark-text);">Tahun Prediksi</label>
+                            <input type="number" class="form-control" id="tahun" name="tahun" min="2019" max="2100" required style="background-color: var(--input-bg); color: var(--dark-text); border: 1px solid var(--border-color); transition: none;">
+                        </div>
+                        <button type="submit" class="btn btn-cta w-100 fw-bold py-2 mt-3" style="background-color: var(--primary-green); color: #fff; transition: none;">Prediksi</button>
+                    </form>
+                    <div id="hasil-prediksi" class="mt-4 p-4 rounded text-center" style="display: none; background-color: var(--dark-green); color: #fff; transition: none;"></div>
+                    <div class="mt-4">
+                        <!-- Card grafik statis tanpa animasi/efek apapun -->
+                        <div class="custom-card" style="background-color: var(--card-bg); border: 1px solid var(--border-color); box-shadow: 0 4px 24px rgba(33,37,41,0.08); transition: none; transform: none;">
+                            <h5 class="fw-bold mb-3" style="color: var(--primary-green);">Grafik Interaktif Prediksi Sampah (Input User)</h5>
+                            <p class="section-subtitle" style="color: var(--dark-text);">Grafik ini menampilkan hasil prediksi sampah berdasarkan input yang kamu masukkan. Jika tersedia, data asli juga akan ditampilkan untuk perbandingan.</p>
+                            <hr style="border-color: var(--border-color);">
+                            <div style="height: 450px;">
+                                <canvas id="grafikPrediksiUser" style="display: block;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="text-center" style="background: var(--dark-green); color: #fff;">
+        <p class="text-light my-auto" style="color: #fff !important;">&copy; 2025 Jaga Jaktim - Proyek UAS Kelompok 3</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.getElementById('prediksi-user-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const jumlah_sampah = document.getElementById('jumlah_sampah').value;
+        const jumlah_penduduk = document.getElementById('jumlah_penduduk').value;
+        const tahun = document.getElementById('tahun').value;
+        const hasilDiv = document.getElementById('hasil-prediksi');
+        const grafikCanvas = document.getElementById('grafikPrediksiUser');
+        hasilDiv.style.display = 'none';
+        grafikCanvas.style.display = 'none';
+        hasilDiv.innerHTML = 'Memproses prediksi...';
+        hasilDiv.style.display = 'block';
+        try {
+            const res = await fetch('/api/prediksi-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ jumlah_sampah, jumlah_penduduk, tahun })
+            });
+            const data = await res.json();
+            if (data.error) {
+                hasilDiv.innerHTML = 'Terjadi kesalahan: ' + data.error;
+                return;
+            }
+            hasilDiv.innerHTML = `<h4>Prediksi Sampah Tahun ${tahun}</h4><p class='fs-3 fw-bold'>${data.prediksi ? data.prediksi.toLocaleString('id-ID', {maximumFractionDigits:2}) : '-'} ton</p>`;
+            // Tampilkan grafik
+            if (data.grafik && data.grafik.length > 0) {
+                grafikCanvas.style.display = 'block';
+                // Cek apakah ada data asli (jika API backend mengembalikan data_asli)
+                const labels = data.grafik.map(d => d.tahun);
+                const dataAsli = data.grafik.map(d => d.data_asli !== undefined ? d.data_asli : null);
+                const dataPrediksi = data.grafik.map(d => d.prediksi);
+                if (window.grafikUserChart) window.grafikUserChart.destroy();
+                window.grafikUserChart = new Chart(grafikCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Data Asli',
+                                data: dataAsli,
+                                backgroundColor: '#198754',
+                                borderColor: '#198754',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Prediksi Model',
+                                data: dataPrediksi,
+                                backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                                borderColor: 'rgba(40, 167, 69, 0.5)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Jumlah Produksi Sampah per Tahun (Ton)',
+                                font: { size: 16 },
+                                color: '#212529'
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#212529'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                ticks: { color: '#6c757d' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#6c757d' }
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (err) {
+            hasilDiv.innerHTML = 'Terjadi kesalahan: ' + err;
+        }
+    });
+    </script>
+</body>
+</html> 

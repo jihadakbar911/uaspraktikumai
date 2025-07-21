@@ -30,13 +30,74 @@ except Exception as e:
 def home(): return render_template('index.html')
 
 @app.route('/prediksi')
-def prediksi(): return render_template('prediksi.html')
+def prediksi(): return render_template('analisis.html')
 
 @app.route('/edukasi')
 def edukasi(): return render_template('edukasi.html')
 
 @app.route('/simulasi')
 def simulasi(): return render_template('simulasi.html')
+
+@app.route('/prediksi-user')
+def prediksi_user():
+    return render_template('prediksi_user.html')
+
+from prophet import Prophet
+import pandas as pd
+
+@app.route('/api/prediksi-user', methods=['POST'])
+def api_prediksi_user():
+    try:
+        data = request.get_json()
+        tahun = int(data['tahun'])
+        jumlah_sampah = float(data['jumlah_sampah'])
+        jumlah_penduduk = float(data['jumlah_penduduk'])
+
+        # Load data historis dan model Prophet
+        with open('static/prophet_forecast.json', 'r') as f:
+            data_hist = json.load(f)
+        df_hist = pd.DataFrame(data_hist)
+        # Gunakan data historis untuk retrain Prophet (agar input user bisa diprediksi di tahun berapapun)
+        df_prophet = df_hist.dropna(subset=['data_asli', 'prediksi', 'tahun'])
+        df_prophet = df_prophet.rename(columns={'tahun': 'ds', 'data_asli': 'y'})
+        df_prophet['ds'] = pd.to_datetime(df_prophet['ds'].astype(int).astype(str) + '-12-31')
+        df_prophet['jumlah_penduduk'] = jumlah_penduduk  # Gunakan input user untuk semua prediksi
+        model = Prophet(yearly_seasonality=False, weekly_seasonality=False, daily_seasonality=False)
+        model.add_regressor('jumlah_penduduk')
+        model.fit(df_prophet[['ds', 'y', 'jumlah_penduduk']])
+
+        # Buat dataframe future sesuai tahun yang diminta user
+        tahun_terakhir = df_prophet['ds'].dt.year.max()
+        tahun_user = tahun
+        n_years = tahun_user - tahun_terakhir
+        if n_years < 0:
+            # Jika tahun user di masa lalu, prediksi ulang dari data historis
+            future = df_prophet[df_prophet['ds'].dt.year == tahun_user][['ds', 'jumlah_penduduk']]
+        else:
+            future = model.make_future_dataframe(periods=n_years, freq='YE')
+            future['jumlah_penduduk'] = jumlah_penduduk
+        forecast = model.predict(future)
+        # Ambil prediksi tahun yang diminta user
+        prediksi_tahun = forecast[forecast['ds'].dt.year == tahun_user]['yhat'].values
+        prediksi_angka = float(prediksi_tahun[0]) if len(prediksi_tahun) > 0 else None
+        # Siapkan data grafik (tahun, prediksi, data_asli)
+        grafik = []
+        for _, row in forecast.iterrows():
+            tahun_row = int(row['ds'].year)
+            # Cari data_asli dari data_hist jika ada
+            data_asli = None
+            for rec in data_hist:
+                if rec['tahun'] == tahun_row:
+                    data_asli = rec.get('data_asli', None)
+                    break
+            grafik.append({
+                'tahun': tahun_row,
+                'prediksi': float(row['yhat']),
+                'data_asli': data_asli
+            })
+        return jsonify({'prediksi': prediksi_angka, 'grafik': grafik})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # ===================================================================
 # BAGIAN BARU: API untuk menyajikan data grafik interaktif

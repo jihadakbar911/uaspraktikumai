@@ -58,11 +58,12 @@ model_prophet.add_regressor('jumlah_penduduk')
 model_prophet.fit(df_prophet)
 print("✅ Model Prophet berhasil dilatih.")
 
-# 3. Lakukan prediksi hingga 2026
-future = model_prophet.make_future_dataframe(periods=2, freq='YE')
-future['jumlah_penduduk'] = list(df_prophet['jumlah_penduduk']) + [df_prophet['jumlah_penduduk'].iloc[-1]] * 2
+# 3. Lakukan prediksi hingga 2027 (atau lebih)
+# Ganti periods agar prediksi sampai tahun 2027 (2024 terakhir data, 2025, 2026, 2027 = periods=3)
+future = model_prophet.make_future_dataframe(periods=3, freq='YE')
+future['jumlah_penduduk'] = list(df_prophet['jumlah_penduduk']) + [df_prophet['jumlah_penduduk'].iloc[-1]] * 3
 forecast = model_prophet.predict(future)
-print("✅ Prediksi masa depan telah dibuat.")
+print("✅ Prediksi masa depan hingga 2027 telah dibuat.")
 
 # ===================================================================
 # BAGIAN YANG DIPERBAIKI: Menggabungkan dan membersihkan data untuk JSON
@@ -91,10 +92,17 @@ for record in data_to_save:
     cleaned_data_for_json.append(cleaned_record)
 
 # Simpan data yang sudah 100% bersih ke file JSON
+# Hanya sampai 2026 untuk grafik_data.json
+cleaned_data_sampai_2026 = [rec for rec in cleaned_data_for_json if rec['tahun'] <= 2026]
 with open('static/grafik_data.json', 'w') as f:
+    json.dump(cleaned_data_sampai_2026, f)
+
+# Simpan juga data extended (sampai 2027+) untuk kebutuhan prediksi user
+with open('static/prophet_forecast.json', 'w') as f:
     json.dump(cleaned_data_for_json, f)
 
 print("✅ Data untuk grafik interaktif telah disimpan sebagai 'grafik_data.json'.")
+print("✅ Data prediksi extended (2027+) disimpan sebagai 'prophet_forecast.json'.")
 # ===================================================================
 
 print("\nProses Selesai.")
